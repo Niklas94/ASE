@@ -217,7 +217,7 @@
                                     <Insets left="25.0" right="25.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button fx:id="btn_softkey_6" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" styleClass="softkey" stylesheets="@application.css" textOverrun="CLIP">
+                              <Button fx:id="btn_softkey_6" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" styleClass="softkey" stylesheets="@application.css" textOverrun="CLIP" >
                                  <HBox.margin>
                                     <Insets left="25.0" right="25.0" />
                                  </HBox.margin>

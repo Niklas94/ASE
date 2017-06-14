@@ -57,8 +57,8 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		switch (message.getType()) {
 		case B:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3)) {
-			weightController.showMessagePrimaryDisplay(String.valueOf(-taraWeight));
-			
+				weightController.showMessagePrimaryDisplay(String.valueOf(-taraWeight));
+
 			}
 			else
 				System.out.println("ES");
@@ -69,14 +69,12 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 				weightController.showMessageSecondaryDisplay(message.getMessage());
 				if (isDouble(message.getMessage()))
 					weight = Double.parseDouble(message.getMessage());
-				socketHandler.sendMessage(new SocketOutMessage("Input: " + message.getMessage() + " has been accepted.\n\r"));
 			}
 			else
 				System.out.println("ES");
 			break;
 		case Q:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3)) {
-				socketHandler.sendMessage(new SocketOutMessage("Input: " + message.getMessage() + " has been accepted.\n\r"));
 				System.exit(0);
 			}
 			else
@@ -86,17 +84,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			break;
 		case RM208:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3)) {	
-
-				socketHandler.sendMessage(new SocketOutMessage("Command received.\n\r"));
 				weightController.showMessageSecondaryDisplay(message.getMessage());
-				synchronized(this) {
-					try {
-						this.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				socketHandler.sendMessage(new SocketOutMessage("You picked: " + message.getMessage()));
 			}
 			else 
 				System.out.println("ES");
@@ -110,8 +98,7 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			break;
 		case T:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3)) {
-				socketHandler.sendMessage(new SocketOutMessage("Weight has been tared\n\r"));
-				weightController.showMessagePrimaryDisplay("0.0000 kg");
+				weightController.showMessagePrimaryDisplay("");
 				taraWeight = weight;
 				weight = 0.0;
 
@@ -121,23 +108,20 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			break;
 		case DW:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3)) {
-				weightController.showMessagePrimaryDisplay("0.0000 kg");
+				weightController.showMessagePrimaryDisplay("");
 				weightController.showMessageSecondaryDisplay("");
 				currentDisplay = "";
 				weight = 0.0;
-				socketHandler.sendMessage(new SocketOutMessage("Weight cleared.\n\r"));
 			}
 			else
 				System.out.println("ES");
 			break;
 		case K:
 			handleKMessage(message);
-			socketHandler.sendMessage(new SocketOutMessage("Input: " + message.getMessage() + " has been accepted.\n\r"));
 			break;
 		case P111:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3)) {
 				weightController.showMessageSecondaryDisplay(message.getMessage());
-				socketHandler.sendMessage(new SocketOutMessage("Input: " + message.getMessage() + " has been accepted.\n\r"));
 			}
 			else
 				System.out.println("ES");
@@ -152,15 +136,19 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		switch (message.getMessage()) {
 		case "1" :
 			this.keyState = KeyState.K1;
+			socketHandler.sendMessage(new SocketOutMessage("ok"));
 			break;
 		case "2" :
 			this.keyState = KeyState.K2;
+			socketHandler.sendMessage(new SocketOutMessage("ok"));
 			break;
 		case "3" :
 			this.keyState = KeyState.K3;
+			socketHandler.sendMessage(new SocketOutMessage("ok"));
 			break;
 		case "4" :
 			this.keyState = KeyState.K4;
+			socketHandler.sendMessage(new SocketOutMessage("ok"));
 			break;
 		default:
 			socketHandler.sendMessage(new SocketOutMessage("ES\n\r"));
@@ -176,26 +164,24 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 		case SOFTBUTTON:
 			break;
 		case TARA:
-			counter = false;
-			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3) ){
-				socketHandler.sendMessage(new SocketOutMessage("Button inactive\n\r"));
+			if (keyState.equals(KeyState.K1) || keyState.equals(KeyState.K2) ){
+					//Do nothing atm...
 			}
-			else if (keyState.equals(KeyState.K1) || keyState.equals(KeyState.K2)) {
+			else if (keyState.equals(KeyState.K3) || keyState.equals(KeyState.K4)) {
 				if (weight > 0 && tester != "RM208") {
 					taraWeight = weight;
 					weight = 0.0;
-					weightController.showMessagePrimaryDisplay("0.0000 kg");
+					weightController.showMessagePrimaryDisplay("");
 					weightController.showMessageSecondaryDisplay("Tared weight is: " + taraWeight);
-					socketHandler.sendMessage(new SocketOutMessage("The weight has been tared...\n\r"));
+					socketHandler.sendMessage(new SocketOutMessage(taraWeight.toString()));
 				}
 				else {
-					socketHandler.sendMessage(new SocketOutMessage("You have no object on the weight...\n\r"));
+					//Do nothing...
 				}
 			}
 			currentDisplay = "";
 			break;
 		case TEXT:
-			counter = false;
 			int c = keyPress.getCharacter();
 			if (c >= 48 && c <= 57) {
 				if (currentDisplay == "") 
@@ -219,21 +205,17 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 				System.out.println("Not a number.");
 			break;
 		case ZERO:
-			counter = false;
-			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3) ){
-				socketHandler.sendMessage(new SocketOutMessage("Button inactive.\n\r"));
+			if (keyState.equals(KeyState.K1) || keyState.equals(KeyState.K2) ){
+				//Do nothing...
 			}
-			else if (keyState.equals(KeyState.K1) || keyState.equals(KeyState.K2)) {
-				weightController.showMessagePrimaryDisplay("0.0000 kg");
+			else if (keyState.equals(KeyState.K3) || keyState.equals(KeyState.K4)) {
+				resetDisplay();
 				weightController.showMessageSecondaryDisplay("");
-				currentDisplay = "";
 				weight = 0.0;
 			}
 			break;
 		case C:
-			counter = false;
-			weightController.showMessagePrimaryDisplay("0.0000 kg");
-			currentDisplay = "";
+			resetDisplay();
 			break;
 		case EXIT:
 			socketHandler.sendMessage(new SocketOutMessage("Terminating weight..."));
@@ -241,24 +223,8 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			break;
 		case SEND:
 			if (keyState.equals(KeyState.K4) || keyState.equals(KeyState.K3)) {
-				
-				if (!counter) {
-					weightController.showMessageSecondaryDisplay("Are you sure? Press again to confirm.");
-					counter = true;
-//					synchronized(this) {
-//						this.notify();
-//					}
-				}
-				else {
-					socketHandler.sendMessage(new SocketOutMessage(currentDisplay + "\n\r"));
-					weightController.showMessageSecondaryDisplay("Thank you.");
-					weightController.showMessagePrimaryDisplay("0.0000 kg");
-					currentDisplay = "";
-					counter = false;
-				}
-				synchronized(this) {
-					this.notify();
-				}
+				socketHandler.sendMessage(new SocketOutMessage(currentDisplay + "\n\r"));
+				resetDisplay();
 			}
 			else
 				System.out.println("ES");
@@ -287,5 +253,15 @@ public class MainController implements IMainController, ISocketObserver, IWeight
 			return false;
 		}
 	}
- 
+	
+	/**
+	 * @author Niklas Broch Thielemann
+	 * @description Simple method to reset display...
+	 * 
+	 */
+	public void resetDisplay() {
+		weightController.showMessagePrimaryDisplay("");
+		currentDisplay = "";
+	}
+
 }
